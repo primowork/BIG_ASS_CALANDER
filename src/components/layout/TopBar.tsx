@@ -1,143 +1,147 @@
-import React from 'react';
-import { useCalendarStore } from '../../store/useCalendarStore';
+import React from "react";
 
-export const TopBar: React.FC = () => {
-  const { 
-    currentYear, 
-    viewMode, 
-    zoom,
-    language,
-    setYear, 
-    setViewMode,
-    setZoom,
-    setLanguage 
-  } = useCalendarStore();
+export type SidebarProps = {
+  /** השנה הנוכחית שמוצגת בלוח */
+  year?: number;
+  /** התאריך שנבחר כרגע */
+  selectedDate?: Date | null;
+  /** מעבר לשנה קודמת */
+  onPrevYear?: () => void;
+  /** מעבר לשנה הבאה */
+  onNextYear?: () => void;
+  /** חזרה להיום */
+  onToday?: () => void;
+  /** ניקוי בחירה */
+  onClearSelection?: () => void;
+  /** מצב תצוגה (למשל: "full", "remaining") */
+  viewMode?: string;
+  /** שינוי מצב תצוגה */
+  onViewModeChange?: (mode: string) => void;
+  /** כל דבר נוסף שלא ידוע מראש */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+};
 
-  const handlePrevYear = () => setYear(currentYear - 1);
-  const handleNextYear = () => setYear(currentYear + 1);
-  const handleZoomIn = () => setZoom(zoom + 0.1);
-  const handleZoomOut = () => setZoom(zoom - 0.1);
-  const toggleLanguage = () => setLanguage(language === 'en' ? 'he' : 'en');
+const Sidebar: React.FC<SidebarProps> = (props) => {
+  const {
+    year,
+    selectedDate,
+    onPrevYear,
+    onNextYear,
+    onToday,
+    onClearSelection,
+    viewMode,
+    onViewModeChange,
+  } = props;
 
-  const labels = {
-    en: {
-      remaining: 'Remaining',
-      fullYear: 'Full Year',
-      zoomIn: 'Zoom In',
-      zoomOut: 'Zoom Out',
-      language: 'עב',
-    },
-    he: {
-      remaining: 'נותרו',
-      fullYear: 'שנה מלאה',
-      zoomIn: 'התקרב',
-      zoomOut: 'התרחק',
-      language: 'EN',
-    },
+  const formattedSelectedDate = selectedDate
+    ? selectedDate.toLocaleDateString("he-IL", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })
+    : "אין בחירה";
+
+  const handleViewModeClick = (mode: string) => {
+    if (onViewModeChange) {
+      onViewModeChange(mode);
+    }
   };
 
-  const t = labels[language];
-
   return (
-    <div className="backdrop-blur-xl bg-white/80 border-b border-gray-200/50 px-8 py-4 sticky top-0 z-50">
-      <div className="flex items-center justify-between max-w-[2000px] mx-auto">
-        {/* Year Navigation */}
-        <div className="flex items-center gap-6">
+    <aside className="sidebar w-64 min-w-[16rem] max-w-[18rem] border-r border-neutral-800 bg-neutral-950 text-neutral-100 flex flex-col">
+      {/* כותרת שנה וניווט */}
+      <div className="p-4 border-b border-neutral-800">
+        <div className="flex items-center justify-between mb-2">
           <button
-            onClick={handlePrevYear}
-            className="p-2.5 hover:bg-gray-100/80 rounded-full transition-all duration-200 hover:scale-110 active:scale-95"
-            aria-label="Previous year"
+            type="button"
+            className="px-2 py-1 text-sm border border-neutral-700 rounded hover:bg-neutral-800"
+            onClick={onPrevYear}
           >
-            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-            </svg>
+            ← שנה קודמת
           </button>
-          
-          <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            {currentYear}
-          </div>
-          
+          <span className="text-lg font-semibold">
+            {year ?? new Date().getFullYear()}
+          </span>
           <button
-            onClick={handleNextYear}
-            className="p-2.5 hover:bg-gray-100/80 rounded-full transition-all duration-200 hover:scale-110 active:scale-95"
-            aria-label="Next year"
+            type="button"
+            className="px-2 py-1 text-sm border border-neutral-700 rounded hover:bg-neutral-800"
+            onClick={onNextYear}
           >
-            <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
+            שנה הבאה →
           </button>
         </div>
 
-        {/* View Mode Toggle - Apple Style Segmented Control */}
-        <div className="flex items-center gap-1 bg-gray-100/80 rounded-full p-1 backdrop-blur-sm">
+        <div className="flex gap-2 mt-2">
           <button
-            onClick={() => setViewMode('remaining')}
-            className={`
-              px-6 py-2 rounded-full font-medium text-sm
-              transition-all duration-300 ease-out
-              ${viewMode === 'remaining'
-                ? 'bg-white text-gray-900 shadow-lg scale-105'
-                : 'text-gray-600 hover:text-gray-900'
-              }
-            `}
+            type="button"
+            className="flex-1 px-2 py-1 text-sm border border-neutral-700 rounded hover:bg-neutral-800"
+            onClick={onToday}
           >
-            {t.remaining}
+            היום
           </button>
           <button
-            onClick={() => setViewMode('fullYear')}
-            className={`
-              px-6 py-2 rounded-full font-medium text-sm
-              transition-all duration-300 ease-out
-              ${viewMode === 'fullYear'
-                ? 'bg-white text-gray-900 shadow-lg scale-105'
-                : 'text-gray-600 hover:text-gray-900'
-              }
-            `}
+            type="button"
+            className="flex-1 px-2 py-1 text-sm border border-neutral-700 rounded hover:bg-neutral-800"
+            onClick={onClearSelection}
           >
-            {t.fullYear}
-          </button>
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center gap-4">
-          {/* Zoom */}
-          <div className="flex items-center gap-2 bg-gray-100/80 rounded-full px-3 py-1.5 backdrop-blur-sm">
-            <button
-              onClick={handleZoomOut}
-              disabled={zoom <= 0.5}
-              className="p-1.5 hover:bg-white/80 rounded-full transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-110 active:scale-95"
-              aria-label={t.zoomOut}
-            >
-              <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 12H4" />
-              </svg>
-            </button>
-            
-            <span className="text-sm text-gray-700 font-semibold min-w-[3rem] text-center tabular-nums">
-              {Math.round(zoom * 100)}%
-            </span>
-            
-            <button
-              onClick={handleZoomIn}
-              disabled={zoom >= 2.0}
-              className="p-1.5 hover:bg-white/80 rounded-full transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-110 active:scale-95"
-              aria-label={t.zoomIn}
-            >
-              <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Language Toggle */}
-          <button
-            onClick={toggleLanguage}
-            className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100/80 hover:bg-white/80 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 backdrop-blur-sm"
-          >
-            {t.language}
+            נקה בחירה
           </button>
         </div>
       </div>
-    </div>
+
+      {/* מצב תצוגה */}
+      <div className="p-4 border-b border-neutral-800">
+        <h3 className="text-sm font-semibold mb-2">מצב תצוגה</h3>
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            className={
+              "w-full px-2 py-1 text-sm border rounded text-left " +
+              (viewMode === "full"
+                ? "border-amber-400 bg-neutral-800"
+                : "border-neutral-700 hover:bg-neutral-900")
+            }
+            onClick={() => handleViewModeClick("full")}
+          >
+            שנה מלאה
+          </button>
+          <button
+            type="button"
+            className={
+              "w-full px-2 py-1 text-sm border rounded text-left " +
+              (viewMode === "remaining"
+                ? "border-amber-400 bg-neutral-800"
+                : "border-neutral-700 hover:bg-neutral-900")
+            }
+            onClick={() => handleViewModeClick("remaining")}
+          >
+            ימים שנותרו
+          </button>
+        </div>
+      </div>
+
+      {/* אינפורמציה על היום הנבחר */}
+      <div className="p-4 border-b border-neutral-800 text-sm">
+        <h3 className="font-semibold mb-1">תאריך נבחר</h3>
+        <p className="mb-2">{formattedSelectedDate}</p>
+        <p className="text-xs opacity-70">
+          אפשר להשתמש בחלונית הזו כדי להציג בעתיד הערות, תגים,
+          מטרות חודשיות או כל מידע נוסף שתרצה לקשר ליום שנבחר.
+        </p>
+      </div>
+
+      {/* מקום לגידול עתידי – אג׳נדה, לג׳נדת צבעים וכו' */}
+      <div className="p-4 text-xs opacity-70">
+        <p>כאן אפשר להוסיף:</p>
+        <ul className="list-disc list-inside mt-1 space-y-1">
+          <li>אג׳נדה חודשית / שנתית</li>
+          <li>לג׳נדת צבעים לקטגוריות אירועים</li>
+          <li>מספר משימות פתוחות, מטרות רבעון ועוד</li>
+        </ul>
+      </div>
+    </aside>
   );
 };
+
+export default Sidebar;
