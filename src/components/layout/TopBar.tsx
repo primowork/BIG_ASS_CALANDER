@@ -71,7 +71,6 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
             שנה הבאה →
           </button>
         </div>
-
         <div className="flex gap-2 mt-2">
           <button
             type="button"
@@ -131,17 +130,10 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         </p>
       </div>
 
-      {/* מקום לגידול עתידי – אג׳נדה, לג׳נדת צבעים וכו' */}
+      {/* מקום לגידול עתידי */}
       <div className="p-4 text-xs opacity-70">
         <p>כאן אפשר להוסיף:</p>
         <ul className="list-disc list-inside mt-1 space-y-1">
           <li>אג׳נדה חודשית / שנתית</li>
           <li>לג׳נדת צבעים לקטגוריות אירועים</li>
-          <li>מספר משימות פתוחות, מטרות רבעון ועוד</li>
-        </ul>
-      </div>
-    </aside>
-  );
-};
-
-export default Sidebar;
+          <li>מספר מש
