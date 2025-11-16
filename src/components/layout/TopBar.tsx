@@ -130,10 +130,17 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         </p>
       </div>
 
-      {/* מקום לגידול עתידי */}
+      {/* מקום לגידול עתידי – אג׳נדה, לג׳נדת צבעים וכו' */}
       <div className="p-4 text-xs opacity-70">
         <p>כאן אפשר להוסיף:</p>
         <ul className="list-disc list-inside mt-1 space-y-1">
           <li>אג׳נדה חודשית / שנתית</li>
           <li>לג׳נדת צבעים לקטגוריות אירועים</li>
-          <li>מספר מש
+          <li>מספר משימות פתוחות, מטרות רבעון ועוד</li>
+        </ul>
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;
